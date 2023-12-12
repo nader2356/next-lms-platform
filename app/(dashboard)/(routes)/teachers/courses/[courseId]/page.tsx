@@ -1,9 +1,10 @@
 import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import { LayoutDashboard } from "lucide-react";
-
 import { db } from "@/lib/db";
 import { IconBadge } from "@/components/icon-badge";
+
+import { TitleForm } from "./_components/title-form";
 
 const CourseIdPage = async ({
   params
@@ -11,21 +12,17 @@ const CourseIdPage = async ({
   params: { courseId: string }
 }) => {
   const { userId } = auth();
-
   if (!userId) {
     return redirect("/");
   }
-
   const course = await db.course.findUnique({
     where: {
       id: params.courseId
     }
   });
-
   if (!course) {
     return redirect("/");
   }
-
   const requiredFields = [
     course.title,
     course.description,
@@ -33,12 +30,9 @@ const CourseIdPage = async ({
     course.price,
     course.categoryId
   ];
-
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
-
   const completionText = `(${completedFields}/${totalFields})`
-
   return ( 
     <div className="p-6">
       <div className="flex items-center justify-between">
@@ -59,6 +53,10 @@ const CourseIdPage = async ({
               Customize your course
             </h2>
           </div>
+          <TitleForm
+            initialData={course}
+            courseId={course.id}
+          />
         </div>
       </div>
     </div>
