@@ -1,7 +1,6 @@
 import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import { CircleDollarSign, File, LayoutDashboard, ListChecks } from "lucide-react";
-
 import { db } from "@/lib/db";
 import { IconBadge } from "@/components/icon-badge";
 import { TitleForm } from "./_components/title-form";
@@ -10,6 +9,7 @@ import { ImageForm } from "./_components/image-form";
 import { CategoryForm } from "./_components/category-form";
 import { PriceForm } from "./_components/price-form";
 import { AttachmentForm } from "./_components/attachment-form";
+import { ChaptersForm } from "./_components/chapters-form";
 
 const CourseIdPage = async ({
   params
@@ -20,11 +20,18 @@ const CourseIdPage = async ({
   if (!userId) {
     return redirect("/");
   }
+
   const course = await db.course.findUnique({
     where: {
-      id: params.courseId
+      id: params.courseId,
+      userId
     },
     include: {
+      chapters: {
+        orderBy: {
+          position: "asc",
+        },
+      },
       attachments: {
         orderBy: {
           createdAt: "desc",
@@ -45,8 +52,10 @@ const CourseIdPage = async ({
     course.description,
     course.imageUrl,
     course.price,
-    course.categoryId
+    course.categoryId,
+    course.chapters.some(chapter => chapter.isPublished),
   ];
+
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
   const completionText = `(${completedFields}/${totalFields})`
@@ -85,7 +94,7 @@ const CourseIdPage = async ({
           <CategoryForm
             initialData={course}
             courseId={course.id}
-            options={categories.map((category: { name: any; id: any; }) => ({
+            options={categories.map((category) => ({
               label: category.name,
               value: category.id,
             }))}
@@ -99,9 +108,10 @@ const CourseIdPage = async ({
                 Course chapters
               </h2>
             </div>
-            <div>
-              TODO: Chapters
-            </div>
+            <ChaptersForm
+              initialData={course}
+              courseId={course.id}
+            />
           </div>
           <div>
             <div className="flex items-center gap-x-2">
