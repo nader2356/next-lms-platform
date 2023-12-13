@@ -6,6 +6,7 @@ import { ArrowLeft, LayoutDashboard } from "lucide-react";
 import { db } from "@/lib/db";
 import { IconBadge } from "@/components/icon-badge";
 import { ChapterTitleForm } from "../../_components/chapter-title-form";
+import { ChapterDescriptionForm } from "../../_components/chapter-description-form";
 
 
 const ChapterIdPage = async ({
@@ -14,11 +15,9 @@ const ChapterIdPage = async ({
   params: { courseId: string; chapterId: string }
 }) => {
   const { userId } = auth();
-
   if (!userId) {
     return redirect("/");
   }
-
   const chapter = await db.chapter.findUnique({
     where: {
       id: params.chapterId,
@@ -28,22 +27,17 @@ const ChapterIdPage = async ({
       muxData: true,
     },
   });
-
   if (!chapter) {
     return redirect("/")
   }
-
   const requiredFields = [
     chapter.title,
     chapter.description,
     chapter.videoUrl,
   ];
-
   const totalFields = requiredFields.length;
   const completedFields = requiredFields.filter(Boolean).length;
-
   const completionText = `(${completedFields}/${totalFields})`;
-
   return ( 
     <div className="p-6">
       <div className="flex items-center justify-between">
@@ -81,11 +75,16 @@ const ChapterIdPage = async ({
               courseId={params.courseId}
               chapterId={params.chapterId}
             />
+            <ChapterDescriptionForm
+              initialData={chapter}
+              courseId={params.courseId}
+              chapterId={params.chapterId}
+            />
           </div>
         </div>
       </div>
     </div>
    );
 }
-
+ 
 export default ChapterIdPage;
