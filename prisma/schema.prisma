@@ -3,9 +3,12 @@ datasource db {
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
+
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
+
 model Course {
   id String @id @default(uuid())
   userId String
@@ -22,7 +25,9 @@ model Course {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@index([categoryId])
+  @@fulltext([title])
 }
+
 model Category {
   id String @id @default(uuid())
   name String @unique
@@ -38,7 +43,6 @@ model Attachment {
   updatedAt DateTime @updatedAt
   @@index([courseId])
 }
-
 model Chapter {
   id String @id @default(uuid())
   title String
@@ -55,7 +59,6 @@ model Chapter {
   updatedAt DateTime @updatedAt
   @@index([courseId])
 }
-
 model MuxData {
   id String @id @default(uuid())
   assetId String
@@ -63,7 +66,6 @@ model MuxData {
   chapterId String @unique
   chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 }
-
 model UserProgress {
   id String @id @default(uuid())
   userId String
@@ -75,7 +77,6 @@ model UserProgress {
   @@index([chapterId])
   @@unique([userId, chapterId])
 }
-
 model Purchase {
   id String @id @default(uuid())
   userId String
@@ -85,7 +86,6 @@ model Purchase {
   updatedAt DateTime @updatedAt()
   @@index([courseId])
 }
-
 model StripeCustomer {
   id String @id @default(uuid())
   userId String @unique
