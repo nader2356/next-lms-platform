@@ -15,17 +15,14 @@ interface CourseSidebarProps {
   };
   progressCount: number;
 };
-
 export const CourseSidebar = async ({
   course,
   progressCount,
 }: CourseSidebarProps) => {
   const { userId } = auth();
-
   if (!userId) {
     return redirect("/");
   }
-
   const purchase = await db.purchase.findUnique({
     where: {
       userId_courseId: {
@@ -34,7 +31,6 @@ export const CourseSidebar = async ({
       }
     }
   });
-
   return (
     <div className="h-full border-r flex flex-col overflow-y-auto shadow-sm">
       <div className="p-8 flex flex-col border-b">

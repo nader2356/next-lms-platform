@@ -1,9 +1,9 @@
+import { IconBadge } from "@/components/icon-badge";
+import { formatPrice } from "@/lib/format";
+import { CourseProgress } from "@/components/course-progress";
 import Image from "next/image";
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
-
-import { IconBadge } from "@/components/icon-badge";
-import { formatPrice } from "@/lib/format";
 
 interface CourseCardProps {
   id: string;
@@ -14,7 +14,6 @@ interface CourseCardProps {
   progress: number | null;
   category: string;
 };
-
 export const CourseCard = ({
   id,
   title,
@@ -51,9 +50,11 @@ export const CourseCard = ({
             </div>
           </div>
           {progress !== null ? (
-            <div>
-              TODO: Progress component
-            </div>
+            <CourseProgress
+              variant={progress === 100 ? "success" : "default"}
+              size="sm"
+              value={progress}
+            />
           ) : (
             <p className="text-md md:text-sm font-medium text-slate-700">
               {formatPrice(price)}
