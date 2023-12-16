@@ -11,7 +11,6 @@ interface CourseEnrollButtonProps {
   price: number;
   courseId: string;
 }
-
 export const CourseEnrollButton = ({
   price,
   courseId,
